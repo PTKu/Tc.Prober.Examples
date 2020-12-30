@@ -348,3 +348,30 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# CodeRush
+.cr/
+
+# Inxton.Vortex.Framework IVF
+_Vortex/builder/
+_Vortex/out/
+_Vortex/*.exe
+_Vortex/*.md
+_meta/
+_generated/
+
+# TwinCAT3 
+
+_Boot/
+_CompileInfo/
+_Libraries/
+*.library
+*.compiled-library
+*.tpy
+*.tclrs
+*.compileinfo
+*.tmc
+*.tmcRefac
+*.~u
+*.tsproj.bak
+*.xti.bak
