@@ -4,27 +4,29 @@
 
 ### History
 
-The concept of Tc.Prober was developed and used within MTS company as a part of an effort to provide high quality, testable components for industrial applications based on TwinCAT3 platform. Tc.Prober makes part of wider initiative that eventually became Inxton project.
+The concept of Tc.Prober was developed and used within [MTS](mts.sk/en) company as a part of an effort to provide high quality, testable components for industrial applications based on [Beckhoff's TwinCAT3](https://infosys.beckhoff.com/english.php?content=../content/1033/tcinfosys3/index.html&id=) platform. Tc.Prober is part of wider initiative that eventually became [Inxton project](inxton.com).
 
 ### What Tc.Prober is
 
-Tc.Prober is a library that in conjunction with Inxton.Vortex.Compiler (IVC) allows for running unit tests of the TwiCAT3 PLC code using well known unit testing frameworks in .net ecosystem.
+Tc.Prober is a library that in conjunction with [*Inxton.Vortex.Compiler*](https://github.com/Inxton/documentation/blob/master/apis/Inxton.vortex.compiler.console/README.md) (IVC) allows for running unit tests of the TwiCAT3 plc code using well known unit testing frameworks in .net ecosystem.
 
-Tc.Prober takes advantage of some features offered by TwinCAT3 platform, that makes it possible to invoke PLC methods marked with attribute TcRpcEneable over ADS from a .net based code.
+Tc.Prober takes advantage of some features offered by TwinCAT3 platform, that make it possible to invoke plc methods marked with attribute ```TcRpcEnable``` over ADS from a .net based code.
 
-In order to make the process faster to implement, we relay on IVC compiler that trans-piles the PLC program declarations and methods into so called twin-objects, these are C# classes mirroring the structure of the PLC program. They provide multiple layered access to the PLC programs’ data and remotely invokable methods.
+In order to make the process faster to implement, we relay on IVC compiler that trans-piles the plc program declarations and methods into so called [twin-objects](https://github.com/Inxton/documentation/blob/master/apis/Inxton.vortex.compiler.console/Conceptual/TwinObjects.md), these are C# classes mirroring the structure of the plc program. They provide multiple layered access to the plc's data and remotely invocable methods.
 
-Tc.Prober implements *runners* that provide control over the execution of the code under test. There is also an implementation of the runner that provides recording mechanism. This is especially useful when we have availability of a hardware for testing for limited time. In this way we can record the behavior of the hardware when available and re-run the tests with recorded image later.
+Tc.Prober implements [runners](https://github.com/TcOpenGroup/tc.prober#run-test-in-nunit) that provide control over the execution of the code under test. Runner in other words is a mechanism emulate plc task from .net environment.
 
-So to answer a question of what the Tc.Prober is in short: library that make brings your unit testing iterations to .net testing frameworks of your choice be it xUnit, nUnit, MSUnit. 
+There is also an implementation of the [runner](https://github.com/TcOpenGroup/tc.prober#test-recording) with test recording capability. This is especially useful when we have availability of a hardware for testing for limited time. In this way we can record the behavior of the hardware when available and re-run the tests with recorded image later.
+
+So to answer a question of what the Tc.Prober is in short: library that make brings your unit testing iterations to .net testing frameworks of your choice be it xUnit, nUnit, MSUnit.
 
 ### What Tc.Prober is not
 
-In contrast to Tc.Unit Tc.Prober does not implement assertions nor executing mechanism directly in the PLC, it relays intead on testing frameworks .net environment.
+In contrast to Tc.Unit Tc.Prober does not implement assertions nor executing mechanism directly in the PLC, it relays instead on testing frameworks .net environment.
 
 ### How does it work
 
-Following is just a conceptual overview that does not aim to provide fully operational and usable example. In this GitHub repository you can find explanatory functional examples. For simplicity we provide the minimalistic way of writing the testing code that does not necessarily represents the best practice. 
+Following is just a conceptual overview that does not aim to provide fully operational and usable example. In this GitHub repository you can find explanatory functional examples. For simplicity we provide the minimalist way of writing the testing code that does not necessarily represents the best practice.
 
 Let's have a function block with following definition and method implementation:
 
@@ -45,7 +47,7 @@ MoveAbsolute := _position = _targetPosition;
 //----------------------------------
 ~~~
 
-This would be our production code that we shall unit test. For simplicity we simulate the position of the drive in _position variable when _position and _targetPosition equal the method returns true; that in this case stands for operation done.
+This would be our production code that we shall unit test. For simplicity we simulate the position of the drive in ```_position``` variable when ```_position``` and ```_targetPosition``` equal the method returns true; that in this case stands for operation done.
 
 Let's have testing function block that has an instance of ```fbDrive``` block and implements testing method ```MoveAbsoluteTest()``` that invokes fbDrive's MoveAbsolute() method.
 
@@ -67,7 +69,7 @@ MoveAbsoluteTest := fbDrive.MoveAbsolute(Position := Position);
 //----------------------------------
 ~~~
 
-This would be the part of code that executes the test for our ```fbDrive``` block. The body of the method only calls MoveAbsolute method.
+This would be the part of code that executes the test for our ```fbDrive``` block. The body of the method only calls ```MoveAbsolute``` method.
 
 Here are two things to notice:
 
