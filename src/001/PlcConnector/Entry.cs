@@ -6,8 +6,12 @@ using System.Threading.Tasks;
 
 namespace PlcConnector
 {
+
     public static class Entry
     {
-        public static Plc.PlcTwinController Plc = new Plc.PlcTwinController(Vortex.Adapters.Connector.Tc3.Adapter.Tc3ConnectorAdapter.Create(851));
+        const string AmsId = "172.20.10.2.1.1";
+        const int AmsPort = 851;
+
+        public static Plc.PlcTwinController Plc = new Plc.PlcTwinController(Vortex.Adapters.Connector.Tc3.Adapter.Tc3ConnectorAdapter.Create(AmsId, AmsPort));
     }
 }

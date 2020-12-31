@@ -1,0 +1,6 @@
+2020-12-31 09:09:17.202 +01:00 [INF] Opening solution: C:\MTS\Develop\github\PTKu\Tc.Prober.Examples\src\001\001.sln
+2020-12-31 09:09:17.296 +01:00 [INF] Loading dependency tree for project 'C:\MTS\Develop\github\PTKu\Tc.Prober.Examples\src\001\PlcConnector\PlcConnector.csproj'
+2020-12-31 09:09:17.755 +01:00 [INF] Building project 'Plc.Plc'
+2020-12-31 09:09:17.829 +01:00 [INF] Updating project Plc.Plc
+2020-12-31 09:09:19.909 +01:00 [WRN] Twin assembly version (0.0.0.0) and plc project version (0.0.0.1) do not match. You need to adjust the version of the plc project manually. Project property tab version.
+2020-12-31 09:09:19.911 +01:00 [INF] Twin assembly version '0.0.0.0' and plc library version '0.0.0.1' of 'Plc' do not match the library will not be compiled.

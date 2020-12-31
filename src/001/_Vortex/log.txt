@@ -1,0 +1,5 @@
+2020-12-31 09:09:14.454 +01:00 [INF] Builder version : 1.9.1.0 / 1.9.1-preview.3+Branch.tags-v1.9.1-preview.3.Sha.7e99d607d9d7cc18d994209b6bafc33d3065eb38
+2020-12-31 09:09:14.982 +01:00 [WRN] >>>>>>"W","","Config file C:\MTS\Develop\github\PTKu\Tc.Prober.Examples\src\001\_Vortex\vortex_config.json does not exists. Creating default one with defaults.","","","0","0"
+2020-12-31 09:09:18.633 +01:00 [INF] Emitting files into 'C:\MTS\Develop\github\PTKu\Tc.Prober.Examples\src\001\PlcConnector\_generated'
+2020-12-31 09:09:18.799 +01:00 [INF] Compiling sources 'Plc'...
+2020-12-31 09:09:19.942 +01:00 [INF] >>>>>>I, Done

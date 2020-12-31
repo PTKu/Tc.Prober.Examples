@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.5">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.6">
   <POU Name="fbDrive" Id="{6b100403-3442-4127-b0c9-74cb445ed69a}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK fbDrive
 VAR	
@@ -11,9 +11,17 @@ VAR
 	_targetSpeed : LREAL;
 	_targetAccDcc : LREAL;
 END_VAR
-]]></Declaration>
+VAR  
+	_changextime : LREAL;
+END_VAR]]></Declaration>
     <Implementation>
-      <ST><![CDATA[]]></ST>
+      <ST><![CDATA[_changextime := (_targetSpeed * 0.01);
+
+IF(ABS(_position - _targetPosition) <= _changextime * 2) THEN _position := _targetPosition; RETURN; END_IF;
+
+IF (_position < _targetPosition) THEN _position := _position + _changextime; END_IF;
+IF (_position > _targetPosition) THEN _position := _position - _changextime; END_IF;
+]]></ST>
     </Implementation>
     <Method Name="MoveAbsolute" Id="{ead30145-a48e-4801-b0e4-06d223b0dede}">
       <Declaration><![CDATA[METHOD MoveAbsolute : BOOL
@@ -29,12 +37,15 @@ _targetSpeed := Speed;
 _targetAccDcc := AccDcc;
 
 MoveAbsolute := 
-     _targetPosition = Position;
+     _targetPosition = _position;
 ]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="fbDrive">
-      <LineId Id="9" Count="0" />
+      <LineId Id="55" Count="1" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="52" Count="2" />
+      <LineId Id="21" Count="0" />
     </LineIds>
     <LineIds Name="fbDrive.MoveAbsolute">
       <LineId Id="5" Count="0" />

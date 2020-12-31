@@ -356,6 +356,7 @@ MigrationBackup/
 _Vortex/builder/
 _Vortex/out/
 _Vortex/*.exe
+_Vortex/*.txt
 _Vortex/*.md
 _meta/
 _generated/

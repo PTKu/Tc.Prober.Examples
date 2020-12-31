@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.5">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.6">
   <POU Name="fbDriveTest" Id="{43a3ba59-a166-4056-ae4e-41b0b9ce866c}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK INTERNAL fbDriveTest
 VAR
@@ -7,11 +7,11 @@ VAR
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[]]></ST>
+      <ST><![CDATA[_drive();]]></ST>
     </Implementation>
     <Method Name="MoveAbsoluteTest" Id="{4400a0ac-b2f2-4507-bb4e-a4f15f1436cd}">
       <Declaration><![CDATA[{attribute 'TcRpcEnable'}
-METHOD MoveAbsoluteTest : BOOL
+METHOD INTERNAL MoveAbsoluteTest : BOOL
 VAR_INPUT
 	Position : LREAL;
 	Speed : LREAL;
