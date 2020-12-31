@@ -4,7 +4,7 @@
 
 ### History
 
-The concept of Tc.Prober was developed and used within [MTS](mts.sk/en) company as a part of the effort to provide high quality, testable components for industrial applications based on [Beckhoff's TwinCAT3](https://infosys.beckhoff.com/english.php?content=../content/1033/tcinfosys3/index.html&id=) platform. Tc.Prober is part of a wider initiative that eventually became [Inxton project](inxton.com).
+The concept of Tc.Prober was developed and used within [MTS](https://www.mts.sk/en) company as a part of the effort to provide high quality, testable components for industrial applications based on [Beckhoff's TwinCAT3](https://infosys.beckhoff.com/english.php?content=../content/1033/tcinfosys3/index.html&id=) platform. Tc.Prober is part of a wider initiative that eventually became [Inxton project](https://www.inxton.com).
 
 ### What Tc.Prober is
 
