@@ -22,7 +22,7 @@ So to answer a question of what the Tc.Prober is in short: the library that brin
 
 ### What Tc.Prober is not
 
-In contrast to Tc.Unit Tc.Prober does not implement assertions nor executing mechanism directly in the PLC; it relays instead on testing frameworks .net environment.
+In contrast to TcUnit Tc.Prober does not implement assertions nor executing mechanism directly in the PLC; it relays instead on testing frameworks .net environment.
 
 ### How does it work
 
@@ -168,3 +168,143 @@ Now we are ready to execute the tests from ```Test explorer```!
 * In scenarios when method is executed by runner and not plc task it must be taken into consideration the interaction between hard-real-time and non-real-time environment, in particular when interacting with I/O systems. This may lead to convoluted test design, nasty concurrency and race conditions.
 * Whenever the fast execution or low jitter is required, this approach might is not suitable when execution is run exclusively by runners.
 * When the execution of test is provided solely by test runner the breakpoints in plc program are not hit.
+
+# TcUnit
+
+## Brief description  
+
+[TcUnit](https://www.tcunit.org) is an [xUnit](https://en.wikipedia.org/wiki/XUnit) type of framework specifically done for Beckhoffs TwinCAT3 development environment. It consists of a single library that is easily integrated into any existing TwinCAT3 project. It is an open-source framework using the open and permissive [MIT-license](https://opensource.org/licenses/MIT).    
+  
+![TcUnit overview](assets/TcUnit-in-general-3.png)
+
+The framework consists of a single library that can be easily integrated into any TwinCAT 3 PLC project. The tests can be executed either locally or as part of a CI/CD toolchain with the aid of [TcUnit-Runner](https://github.com/tcunit/TcUnit-Runner).  
+![TcUnit-Runner overview](assets/TcUnit-Runner_basic.jpg)
+
+The official web page for the project is available at **[www.tcunit.org](https://www.tcunit.org)**.
+
+## How does it work
+What follows is a very simple example. For more elaborate examples, visit [this](https://tcunit.org/programming-example-introduction/) (TcUnit official advanced example) and [this](https://github.com/tcunit/ExampleProjects) (GitHub example projects) website.
+The general concept is that you write one or several so called **test suites** for every function block (or function) that you want to write tests for.
+![TcUnit general test architecture](assets/TcUnit-Detailed-Architecture-6.png)
+The general structure here is that `PRG_TEST` is the program in where the test-FBs (test suites) are instantiated. Each test suite is responsible of testing one FB or function, and can have one or more **tests** to do so.
+
+Let’s assume we want to create the simplest possible FB that takes two unsigned integers and sums them. We can create the header for the FB, but the actual implementation can (and should) wait after we’ve done the unit tests.
+~~~ PASCAL
+FUNCTION_BLOCK FB_Sum
+VAR_INPUT
+    one : UINT;
+    two : UINT;
+END_VAR
+VAR_OUTPUT
+    result : UINT;
+END_VAR
+~~~
+
+Now let’s create the test suite for this. This FB needs to extend `TcUnit.FB_TestSuite`  
+
+~~~ PASCAL
+FUNCTION_BLOCK FB_Sum_Test EXTENDS TcUnit.FB_TestSuite
+VAR
+END_VAR
+~~~
+
+By always adding this code, your test suite gets access to TcUnit and TcUnit will have a handle to your test suites.
+Now it’s time to create our tests. There are many ways to structure your tests, and there are [several guidelines](http://fluxens.com/unittesting.html) for this as well. What we’ll be doing is to create a method for every test, and name it in such a way that it’s clear what the test does. Remember that the unit tests are part of the documentation of your code, and although you might find the code trivial at this moment, there might be other developers reading your code now (or many years in the future). For them well-named tests are invaluable. We’ll be creating two tests called `TwoPlusTwoEqualsFour` and `ZeroPlusZeroEqualsZero`. The `TwoPlusTwoEqualsFour` will look like this:
+
+~~~ PASCAL
+METHOD TwoPlusTwoEqualsFour
+VAR
+    Sum : FB_Sum;
+    Result : UINT;
+    ExpectedSum : UINT := 4;
+END_VAR
+----------------------------------------------------------
+TEST('TwoPlusTwoEqualsFour');
+ 
+Sum(one := 2, two := 2, result => Result);
+ 
+AssertEquals(Expected := ExpectedSum,
+             Actual := Result,
+             Message := 'The calculation is not correct');
+ 
+TEST_FINISHED();
+~~~
+
+By calling `TEST()` we tell TcUnit that everything that follows is a test. Remember that we did `EXTEND FB_TestSuite` in our test-suite? This gives us access to assert-methods to check for all the data types available in IEC61131-3, including the `ANY`-type. The Message parameter is optional and is used in case the assertion fails, the text is appended to the error output. We finish the method by calling `TEST_FINISHED()`. This gives the flexibility to have tests that span over more than one PLC-cycle.
+
+For `ZeroPlusZeroEqualsZero` it’s more or less the same code.
+
+~~~ PASCAL
+METHOD ZeroPlusZeroEqualsZero
+VAR
+    Sum : FB_Sum;
+    Result : UINT;
+    ExpectedSum : UINT := 0;
+END_VAR
+----------------------------------------------------------
+TEST('ZeroPlusZeroEqualsZero');
+ 
+Sum(one := 0, two := 0, result => Result);
+ 
+AssertEquals(Expected := ExpectedSum,
+             Actual := Result,
+             Message := 'The calculation is not correct');
+ 
+TEST_FINISHED();
+~~~
+
+Next we need to update the body of the test suite (`FB_Sum_Test`) to make sure these two tests are being run.
+
+~~~ PASCAL
+TwoPlusTwoEqualsFour();
+ZeroPlusZeroEqualsZero();
+~~~
+
+Last but not least, we need to have a program `PRG_TEST` defined in a task that we can run locally on our engineering PC. Note that this program is only created to run the unit-tests, but will never be run on the target PLC. Being part of the library project we only want a convenient way to test all the FBs part of our library, and thus need this program to execute the test suites.
+
+`PRG_TEST` needs to instantiate all the test suites, and only execute one line of code. In this case we only have one test suite.
+
+~~~ PASCAL
+PROGRAM PRG_TEST
+VAR
+    fbSum_Test : FB_Sum_Test; // This is our test suite
+END_VAR
+-----------------------------
+TcUnit.RUN();
+~~~
+What we have now is this:  
+
+![TcUnit detailed architecture](assets/TcUnit-Detailed-Architecture-User-Guide-2.png)
+
+Activating this solution and running it results in the following result in the visual studio error list:
+
+![TcUnit result](assets/TcUnitResult_3.png)
+
+There is one test that has failed, and the reason for this is that we have not written the implementation code yet, only the header of the function block `FB_Sum`. But how come that we have one test succeeding? As we can see, the test `TwoPlusTwoEqualsFour` failed, which means that the one that succeeded was the other test `ZeroPlusZeroEqualsZero`. The reason this succeeds is that the default return value for an output-parameter is zero, and thus it means that even if we haven’t written the body of `FB_Sum` the test will succeed. Let’s finish by implementing the body of `FB_Sum`.
+
+~~~ PASCAL
+FUNCTION_BLOCK FB_Sum
+VAR_INPUT
+    one : UINT;
+    two : UINT;
+END_VAR
+VAR_OUTPUT
+    result : UINT;
+END_VAR
+--------------------
+result := one + two;
+~~~
+Activating this solution and running it results in the following result in the visual studio error list:  
+![TcUnit result](assets/VisualStudioDescriptionSorted.png)
+
+## Advantages
+
+* **Easy to use** - All functionality is provided by one single library. All that is needed is to download & install the library, and provide a reference to the TcUnit-library in your project, and you can start to write your test code.
+* **MIT-license** - The library and all the source code is licensed according to the [MIT-license](https://opensource.org/licenses/MIT), which is one of the most permissive software license terms. The software is completely free and you can use the software in any way you want, be it private or for commercial use as long as you include the MIT license terms with your software.
+* **Automated test runs** - With the additional [TcUnit-Runner software](https://github.com/tcunit/TcUnit-Runner), it’s possible to do integrate all your TcUnit tests into a CI/CD software toolchain. With the aid of Jenkins (or any other automation software), you can have your tests being run automatically and collect test statistics every time something is changed in your software version control (such as Git or Subversion). If you want to know more, read the [documentation for TcUnit-Runner](https://tcunit.org/tcunit-runner-user-manual/).
+* **Runs in PLC** - All tests are run in a PLC-environment, so that real-time behaviour can also be tested
+
+## Disadvantages
+
+* **Requires to learn a new framework** -  If you are already used to standard "IT" frameworks such as JUnit, NUnit or Googletest then TcUnit will feel similar, but it's an additional framework to learn
+* **Runs in PLC** - Can get a little bit time consuming to run the tests if you need to activate configuration, start TwinCAT etc
