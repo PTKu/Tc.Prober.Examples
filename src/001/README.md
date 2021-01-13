@@ -20,7 +20,7 @@ There is also an implementation of the [runner](https://github.com/TcOpenGroup/t
 
 So to answer a question of what the Tc.Prober is in short: the library that brings your unit testing iterations to .NET testing frameworks of your choice be it xUnit, nUnit, MSUnit.
 
-<img src="assets/conceptual.png" width="400" height="300" />
+<img src="assets/conceptual.png" width="600" height="400" />
 
 ### How does it work
 
