@@ -165,7 +165,10 @@ public class DriveTests
 
 Now we are ready to execute the tests from ```Test explorer```!
 
-![overview](assets/overview.png)
+![overview](assets/TcProberProductionBlock.png)
+![overview](assets/TcProbernUnitCodePlc.png)
+![overview](assets/TcProbernUnitCode.png)
+![overview](assets/TcProberTestExplorer.png)
 
 ### Advantages
 
