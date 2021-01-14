@@ -1,12 +1,39 @@
-# Tc.Prober
+# Unit testing in the world of industrial automation
 
-## Brief description
+This is a joint article from Jakob Sagatowski and Peter Kurhajec.
 
-### History
+Unit testing is the practice of writing a test for some required functionality. In the world of "classical" IT software development the concept of unit testing has been around for almost two decades. What is a standard procedure in languages such as Java, C++, .NET/C# and Python has in the world of PLCs been completely lacking. The world of PLCs did neither have proper tools nor did develop any comprehensive automated testing frameworks. Here we present two possible approaches for unit testing in Beckhoff's TwinCAT 3.
+
+## Are you testing?
+
+Yes! We are all testing our programs with (almost) every iteration we do. However, the common procedure for PLC developers and the world of industrial automation in general is to only test the code once we are at the machine on the acceptance level. However, those tests are only executed and validated at the moment of the that particular iteration. At any moment later with a program modification we cannot longer be sure that the functionality we've tested previously was not broken. The later in the development cycle you discover a bug in the software, the more expensive it is to fix. << **TODO:** PETER WILL INCLUDE A REFERENCE TO A STUDY ABOUT THIS HERE>>.
+
+![testpyramid](assets/ThePyramidOfTests.png)
+
+When doing software development, what usually happens when the code base grows is that it gets harder to change the code base as the developer gets scared that some existing functionality might get broken. One of the properties that these tests have is that you suddenly have a **regression test suite** of your code. If you find it necessary to do any changes to the software (for instance, by refactoring or if you want to add functionality), you have all the tests which you easily can re-run. This increases the programmer’s **confidence** in making larger architectural changes when adding new functionality. Once you’ve written tests for a time, it gets natural to test small sets of functionalities at a time, and thus your function blocks usually end up quite small. Unit testing thus leads to more **modularized**, **extensible**, and **flexible code**. When defining the tests, you’ll automatically define what the function blocks under tests should provide, and thus you’ll end up with clear defined interfaces for the function blocks. The unit tests shouldn’t just be software for validating the application, but is equally much a mental engine for the design of the software.
+
+As you’re writing test cases, you get better test code coverage and thus **fewer bugs**. As your test cases are written, you come up with scenarios and run your code that you normally wouldn’t run under normal test circumstances. Any developer that is going to look at your code will get **documentation** of what the code is supposed to do looking at the test cases. The test cases dictate what outputs every function block should provide given a set of inputs. With this information, any developer that looks at the test cases gets a better understanding of what the function block is supposed to do, so the test cases become examples of what the code should do. When developing a certain set of functionalities, you need to define what that functionality is supposed to provide. With unit test cases, this is exactly what we are doing and thus these become **acceptance criteria**. As every test case that you are writing is for a single piece of functionality, you will have to think what interfaces that functionality needs to provide for the rest of the code to be integrated. Only the interfaces for the tests need to be defined. All the other methods and inner workings of the implementing code can be made private! This will result in **tidier code**.
+
+Once the tests pass, you’ll sense a feel of accomplishment knowing your code passes the tests. When you work in a larger project and have thousands of tests that are to be executed, it’s a nice feel to have all the tests pass OK! Starting with unit testing in the beginning will feel like you must double the effort, as you now not only need to write the code itself but also the test cases for them. First off, what you’re doing is saving time that you will later have to spend fixing all the bugs. Second, when you’ve done this for a while it doesn’t take so much longer to write some test cases. And on top of that, you get all the other benefits which are mentioned earlier. Writing tests costs time, but overall development takes less time.
+
+# Two unit testing frameworks for TwinCAT 3
+
+What follows are two approaches for unit testing in TwinCAT 3.
+
+1. Tc.Prober
+1. TcUnit
+
+We will give a brief description of each unit testing frameworks, and also provide a simple example of each.
+
+## Tc.Prober
+
+### Brief description
+
+#### History
 
 The concept of Tc.Prober was developed and used within [MTS](https://www.mts.sk/en) company as a part of the effort to provide high quality, testable components for industrial applications based on [Beckhoff's TwinCAT 3](https://infosys.beckhoff.com/english.php?content=../content/1033/tcinfosys3/index.html&id=) platform. Tc.Prober is part of a wider initiative that eventually became [Inxton project](https://www.inxton.com).
 
-### What Tc.Prober is
+#### What Tc.Prober is
 
 Tc.Prober is a library that in conjunction with [*Inxton.Vortex.Compiler*](https://github.com/Inxton/documentation/blob/master/apis/Inxton.vortex.compiler.console/README.md) (IVC) allows for running unit tests of the TwiCAT 3 plc code using well-known unit testing frameworks widely used .NET ecosystem.
 
@@ -22,7 +49,7 @@ So to answer a question of what the Tc.Prober is in short: the library that brin
 
 <img src="assets/conceptual.png" width="600" height="400" />
 
-### How does it work
+#### How does it work
 
 Following is just a conceptual overview that does not aim to provide a fully working and usable example. In [this GitHub](https://github.com/PTKu/Tc.Prober.Examples) repository, you can find explanatory functional examples. For simplicity, we provide the minimalist way of writing the testing code that does not necessarily represent the best practice.
 
@@ -170,21 +197,21 @@ Now we are ready to execute the tests from ```Test explorer```!
 ![overview](assets/TcProbernUnitCode.png)
 ![overview](assets/TcProberTestExplorer.png)
 
-### Advantages
+#### Advantages
 
 * Direct use of well-evolved unit testing frameworks in plc code testing.
 * Runners can be in control of the cycle execution. It allows creating complex assertions in single cycles.
 * Ability to record the state of the plc structure for later reconstruction of hardware behavior.
 
-### Disadvantages
+#### Disadvantages
 
 * In scenarios when method is executed by runner and not plc task it must be taken into consideration the interaction between hard-real-time and non-real-time environment, in particular when interacting with I/O systems. This may lead to convoluted test design, nasty concurrency and race conditions.
 * Whenever the fast execution or low jitter is required, this approach might is not suitable when execution is run exclusively by runners.
-* When the execution of test is provided solely by test runner the breakpoints in plc program are not hit. Alternatively an asynchronous pattern can be used for testing when the runners only fire execution of the code with a plc task and checks for completion, after which the assertion can be made.
+* When the execution of test is provided solely by test runner the breakpoints in PLC program are not hit. Alternatively an asynchronous pattern can be used for testing when the runners only fire execution of the code within a PLC task and checks for completion, after which the assertion can be made.
 
-# TcUnit
+## TcUnit
 
-## Brief description  
+### Brief description
 
 [TcUnit](https://www.tcunit.org) is an [xUnit](https://en.wikipedia.org/wiki/XUnit) type of framework specifically done for Beckhoffs TwinCAT 3 development environment. It consists of a single library that is easily integrated into any existing TwinCAT 3 project. It is an open-source framework using the open and permissive [MIT-license](https://opensource.org/licenses/MIT).    
   
@@ -195,7 +222,8 @@ The framework consists of a single library that can be easily integrated into an
 
 The official web page for the project is available at **[www.tcunit.org](https://www.tcunit.org)**.
 
-## How does it work
+### How does it work
+
 What follows is a very simple example. For more elaborate examples, visit [this](https://tcunit.org/programming-example-introduction/) (TcUnit official advanced example) and [this](https://github.com/tcunit/ExampleProjects) (GitHub example projects) website.
 The general concept is that you write one or several so called **test suites** for every function block (or function) that you want to write tests for.
 ![TcUnit general test architecture](assets/TcUnit-Detailed-Architecture-6.png)
@@ -310,14 +338,14 @@ result := one + two;
 Activating this solution and running it results in the following result in the visual studio error list:  
 ![TcUnit result](assets/VisualStudioDescriptionSorted.png)
 
-## Advantages
+### Advantages
 
 * **Easy to use** - All functionality is provided by one single library. All that is needed is to download & install the library, and provide a reference to the TcUnit-library in your project, and you can start to write your test code.
 * **MIT-license** - The library and all the source code is licensed according to the [MIT-license](https://opensource.org/licenses/MIT), which is one of the most permissive software license terms. The software is completely free and you can use the software in any way you want, be it private or for commercial use as long as you include the MIT license terms with your software.
 * **Automated test runs** - With the additional [TcUnit-Runner software](https://github.com/tcunit/TcUnit-Runner), it’s possible to do integrate all your TcUnit tests into a CI/CD software toolchain. With the aid of Jenkins (or any other automation software), you can have your tests being run automatically and collect test statistics every time something is changed in your software version control (such as Git or Subversion). If you want to know more, read the [documentation for TcUnit-Runner](https://tcunit.org/tcunit-runner-user-manual/).
 * **Runs in PLC** - All tests are run in a PLC-environment, so that real-time behaviour can also be tested
 
-## Disadvantages
+### Disadvantages
 
 * **Requires to learn a new framework** -  If you are already used to standard "IT" frameworks such as JUnit, NUnit or Googletest then TcUnit will feel similar, but it's an additional framework to learn
 * **Runs in PLC** - Can get a little bit time consuming to run the tests if you need to activate configuration, start TwinCAT etc
