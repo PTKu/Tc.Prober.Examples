@@ -1,20 +1,55 @@
 # Unit testing in the world of industrial automation
 
-This is a joint article from Jakob Sagatowski and Peter Kurhajec.
+This is a joint article by Jakob Sagatowski and Peter Kurhajec.
 
-Unit testing is the practice of writing a test for some required functionality. In the world of "classical" IT software development the concept of unit testing has been around for almost two decades. What is a standard procedure in languages such as Java, C++, .NET/C# and Python has in the world of PLCs been completely lacking. The world of PLCs did neither have proper tools nor did develop any comprehensive automated testing frameworks. Here we present two possible approaches for unit testing in Beckhoff's TwinCAT 3.
+Unit testing is the practice of writing a test for some required functionality.
+In the world of "classical" IT software development the concept of unit testing has been around for almost two decades.
+What is a standard procedure in languages such as Java, C++, .NET/C# and Python has been completely lacking in the world of PLCs. The world of automation did neither have proper tools nor did develop any comprehensive automated testing frameworks. Here we present two possible approaches for unit testing in Beckhoff's TwinCAT 3.
 
-## Are you testing?
+## Are there ways of testing software in TwinCAT 3?
 
-Yes! We are all testing our programs with (almost) every iteration we do. However, the common procedure for PLC developers and the world of industrial automation in general is to only test the code once we are at the machine on the acceptance level. However, those tests are only executed and validated at the moment of the that particular iteration. At any moment later with a program modification we cannot longer be sure that the functionality we've tested previously was not broken. The later in the development cycle you discover a bug in the software, the more expensive it is to fix. << **TODO:** PETER WILL INCLUDE A REFERENCE TO A STUDY ABOUT THIS HERE>>.
+Yes! We are all testing our programs with (almost) every iteration we do.
+However, the common procedure for PLC developers and the world of industrial automation
+in general is to only test the code once we are at the machine on the acceptance level.
+However, those tests are only executed and validated at the moment of that particular iteration.
+As soon as the program is modified, we can no longer be sure that the functionality
+has not been compromised. The later in the development cycle we discover a bug in the software, 
+the more expensive it is to fix. << **TODO:** PETER WILL INCLUDE A REFERENCE TO A STUDY ABOUT THIS HERE>>.
 
 ![testpyramid](assets/ThePyramidOfTests.png)
 
-When doing software development, what usually happens when the code base grows is that it gets harder to change the code base as the developer gets scared that some existing functionality might get broken. One of the properties that these tests have is that you suddenly have a **regression test suite** of your code. If you find it necessary to do any changes to the software (for instance, by refactoring or if you want to add functionality), you have all the tests which you easily can re-run. This increases the programmer’s **confidence** in making larger architectural changes when adding new functionality. Once you’ve written tests for a time, it gets natural to test small sets of functionalities at a time, and thus your function blocks usually end up quite small. Unit testing thus leads to more **modularized**, **extensible**, and **flexible code**. When defining the tests, you’ll automatically define what the function blocks under tests should provide, and thus you’ll end up with clear defined interfaces for the function blocks. The unit tests shouldn’t just be software for validating the application, but is equally much a mental engine for the design of the software.
+When doing software development, what usually happens when the code base grows
+is that it gets harder to change the code base as the developer gets scared that 
+some existing functionality might get broken. One of the properties with 
+unit tests is that you suddenly have a **regression test suite** of your code. 
+If you find it necessary to do any changes to the software
+(for instance, by refactoring or if you want to add functionality), 
+you have all the tests which you easily can re-run. 
+This increases the programmer’s **confidence** in making larger architectural 
+changes when adding new functionality. Once you’ve written tests for a time, 
+it gets natural to test small sets of functionalities at a time, and thus your 
+function blocks usually end up quite small. Unit testing thus leads to more 
+**modularized**, **extensible**, and **flexible code**. 
+When defining the tests, you’ll automatically define what the function blocks 
+under tests should provide, and thus you’ll end up with clear defined interfaces
+for the function blocks. The unit tests shouldn’t just be software for validating
+the application, but is equally much a mental engine for the design of the software.
 
-As you’re writing test cases, you get better test code coverage and thus **fewer bugs**. As your test cases are written, you come up with scenarios and run your code that you normally wouldn’t run under normal test circumstances. Any developer that is going to look at your code will get **documentation** of what the code is supposed to do looking at the test cases. The test cases dictate what outputs every function block should provide given a set of inputs. With this information, any developer that looks at the test cases gets a better understanding of what the function block is supposed to do, so the test cases become examples of what the code should do. When developing a certain set of functionalities, you need to define what that functionality is supposed to provide. With unit test cases, this is exactly what we are doing and thus these become **acceptance criteria**. As every test case that you are writing is for a single piece of functionality, you will have to think what interfaces that functionality needs to provide for the rest of the code to be integrated. Only the interfaces for the tests need to be defined. All the other methods and inner workings of the implementing code can be made private! This will result in **tidier code**.
+As you’re writing test cases, you get better test code coverage and thus **fewer bugs**.
+As your test cases are written, you come up with scenarios and run your code that
+you normally wouldn’t run under normal test circumstances.
+Any developer that is going to look at your code will get **documentation** of what the code is supposed to do looking at the test cases. The test cases dictate what outputs every function block should provide given a set of inputs. With this information, any developer that looks at the test cases gets a better understanding of what the function block is supposed to do, so the test cases become examples of what the code should do. When developing a certain set of functionalities, you need to define what that functionality is supposed to provide. With unit test cases, this is exactly what we are doing and thus these become **acceptance criteria**. As every test case that you are writing is for a single piece of functionality, you will have to think what interfaces that functionality needs to provide for the rest of the code to be integrated. Only the interfaces for the tests need to be defined. All the other methods and inner workings of the implementing code can be made private! This will result in **tidier code**.
 
-Once the tests pass, you’ll sense a feel of accomplishment knowing your code passes the tests. When you work in a larger project and have thousands of tests that are to be executed, it’s a nice feel to have all the tests pass OK! Starting with unit testing in the beginning will feel like you must double the effort, as you now not only need to write the code itself but also the test cases for them. First off, what you’re doing is saving time that you will later have to spend fixing all the bugs. Second, when you’ve done this for a while it doesn’t take so much longer to write some test cases. And on top of that, you get all the other benefits which are mentioned earlier. Writing tests costs time, but overall development takes less time.
+Once the tests pass, you’ll sense a feeling of accomplishment knowing your code passes the tests. 
+When you work in a larger project and have thousands of tests that are to be executed, 
+it’s a nice feeling to have all the tests pass OK!
+Starting with unit testing in the beginning will feel like you must double the effort,
+as you now not only need to write the code itself but also the test cases for them.
+First off, what you’re doing is saving time that you will later have to spend
+fixing all the bugs. Second, when you’ve done this for a while it doesn’t take
+so much longer to write some test cases. And on top of that, you get all the
+other benefits which are mentioned earlier.
+Writing tests costs time, but overall development takes less time.
 
 # Two unit testing frameworks for TwinCAT 3
 
@@ -23,7 +58,7 @@ What follows are two approaches for unit testing in TwinCAT 3.
 1. Tc.Prober
 1. TcUnit
 
-We will give a brief description of each unit testing frameworks, and also provide a simple example of each.
+We will give a brief description of each unit testing framework, and also provide a simple example of each.
 
 ## Tc.Prober
 
@@ -213,11 +248,12 @@ Now we are ready to execute the tests from ```Test explorer```!
 
 ### Brief description
 
-[TcUnit](https://www.tcunit.org) is an [xUnit](https://en.wikipedia.org/wiki/XUnit) type of framework specifically done for Beckhoffs TwinCAT 3 development environment. It consists of a single library that is easily integrated into any existing TwinCAT 3 project. It is an open-source framework using the open and permissive [MIT-license](https://opensource.org/licenses/MIT).    
+[TcUnit](https://www.tcunit.org) is an [xUnit](https://en.wikipedia.org/wiki/XUnit) type of framework specifically done for Beckhoff's TwinCAT 3 development environment. It consists of a single library that is easily integrated into any existing TwinCAT 3 project. It is an open-source framework using the open and permissive [MIT-license](https://opensource.org/licenses/MIT).    
   
 ![TcUnit overview](assets/TcUnit-in-general-3.png)
 
-The framework consists of a single library that can be easily integrated into any TwinCAT 3 PLC project. The tests can be executed either locally or as part of a CI/CD toolchain with the aid of [TcUnit-Runner](https://github.com/tcunit/TcUnit-Runner).  
+The framework consists of a single library that can be easily integrated into any TwinCAT 3 PLC project.
+The tests can be executed either locally or as part of a [CI/CD](https://en.wikipedia.org/wiki/CI/CD) toolchain with the aid of [TcUnit-Runner](https://github.com/tcunit/TcUnit-Runner).  
 ![TcUnit-Runner overview](assets/TcUnit-Runner_basic.jpg)
 
 The official web page for the project is available at **[www.tcunit.org](https://www.tcunit.org)**.
@@ -227,9 +263,10 @@ The official web page for the project is available at **[www.tcunit.org](https:/
 What follows is a very simple example. For more elaborate examples, visit [this](https://tcunit.org/programming-example-introduction/) (TcUnit official advanced example) and [this](https://github.com/tcunit/ExampleProjects) (GitHub example projects) website.
 The general concept is that you write one or several so called **test suites** for every function block (or function) that you want to write tests for.
 ![TcUnit general test architecture](assets/TcUnit-Detailed-Architecture-6.png)
-The general structure here is that `PRG_TEST` is the program in where the test-FBs (test suites) are instantiated. Each test suite is responsible of testing one FB or function, and can have one or more **tests** to do so.
+The general structure here is that `PRG_TEST` is the program in where the test-FBs (test suites) are instantiated.
+Each test suite is responsible for testing one FB or function and can have one or more **tests** to do so.
 
-Let’s assume we want to create the simplest possible FB that takes two unsigned integers and sums them. We can create the header for the FB, but the actual implementation can (and should) wait after we’ve done the unit tests.
+Let’s assume we want to create the simplest possible FB that takes two unsigned integers and sums them. We can create the header for the FB, but the actual implementation can wait after we’ve done the unit tests.
 ~~~ PASCAL
 FUNCTION_BLOCK FB_Sum
 VAR_INPUT
@@ -271,9 +308,9 @@ AssertEquals(Expected := ExpectedSum,
 TEST_FINISHED();
 ~~~
 
-By calling `TEST()` we tell TcUnit that everything that follows is a test. Remember that we did `EXTEND FB_TestSuite` in our test-suite? This gives us access to assert-methods to check for all the data types available in IEC61131-3, including the `ANY`-type. The Message parameter is optional and is used in case the assertion fails, the text is appended to the error output. We finish the method by calling `TEST_FINISHED()`. This gives the flexibility to have tests that span over more than one PLC-cycle.
+By calling `TEST()` we tell TcUnit that everything that follows is a test. Remember that we did `EXTEND FB_TestSuite` in our test-suite? This gives us access to assert-methods to check for all the data types available in IEC61131-3, including the `ANY`-type. The `Message` parameter is optional and is used in case the assertion fails, the text is appended to the error output. We finish the method by calling `TEST_FINISHED()`. This gives the flexibility to have tests that span over more than one PLC-cycle.
 
-For `ZeroPlusZeroEqualsZero` it’s more or less the same code.
+For `ZeroPlusZeroEqualsZero` it’s more or less the same code:
 
 ~~~ PASCAL
 METHOD ZeroPlusZeroEqualsZero
@@ -294,16 +331,16 @@ AssertEquals(Expected := ExpectedSum,
 TEST_FINISHED();
 ~~~
 
-Next we need to update the body of the test suite (`FB_Sum_Test`) to make sure these two tests are being run.
+Next we need to update the body of the test suite (`FB_Sum_Test`) to make sure these two tests are being run:
 
 ~~~ PASCAL
 TwoPlusTwoEqualsFour();
 ZeroPlusZeroEqualsZero();
 ~~~
 
-Last but not least, we need to have a program `PRG_TEST` defined in a task that we can run locally on our engineering PC. Note that this program is only created to run the unit-tests, but will never be run on the target PLC. Being part of the library project we only want a convenient way to test all the FBs part of our library, and thus need this program to execute the test suites.
+Last but not least, we need to have a program `PRG_TEST` defined in a task that we can run locally on our engineering PC. Note that this program is only created to run the unit tests, but it will never be run on the target PLC. Being part of the library project we only want a convenient way to test all the FBs part of our library, and thus need this program to execute the test suites.
 
-`PRG_TEST` needs to instantiate all the test suites, and only execute one line of code. In this case we only have one test suite.
+`PRG_TEST` needs to instantiate all the test suites, but it only needs to execute one line of code. In this case we only have one test suite:
 
 ~~~ PASCAL
 PROGRAM PRG_TEST
@@ -317,11 +354,11 @@ What we have now is this:
 
 ![TcUnit detailed architecture](assets/TcUnit-Detailed-Architecture-User-Guide-2.png)
 
-Activating this solution and running it results in the following result in the visual studio error list:
+Activating this solution and running it results in the following result in the Visual Studio error list:
 
 ![TcUnit result](assets/TcUnitResult_3.png)
 
-There is one test that has failed, and the reason for this is that we have not written the implementation code yet, only the header of the function block `FB_Sum`. But how come that we have one test succeeding? As we can see, the test `TwoPlusTwoEqualsFour` failed, which means that the one that succeeded was the other test `ZeroPlusZeroEqualsZero`. The reason this succeeds is that the default return value for an output-parameter is zero, and thus it means that even if we haven’t written the body of `FB_Sum` the test will succeed. Let’s finish by implementing the body of `FB_Sum`.
+There is one test that has failed, and the reason for this is that we have not written the implementation code yet, only the header of the function block `FB_Sum`. But how come that we have one test succeeding? As we can see, the test `TwoPlusTwoEqualsFour` failed, which means that the one that succeeded was the other test `ZeroPlusZeroEqualsZero`. The reason this succeeds is that the default return value for an output-parameter is zero, and thus it means that even if we haven’t written the body of `FB_Sum` the test will succeed. Let’s finish by implementing the body of `FB_Sum`:
 
 ~~~ PASCAL
 FUNCTION_BLOCK FB_Sum
@@ -335,17 +372,17 @@ END_VAR
 --------------------
 result := one + two;
 ~~~
-Activating this solution and running it results in the following result in the visual studio error list:  
+Activating this solution and running it results in the following result in the Visual Studio error list:  
 ![TcUnit result](assets/VisualStudioDescriptionSorted.png)
 
 ### Advantages
 
-* **Easy to use** - All functionality is provided by one single library. All that is needed is to download & install the library, and provide a reference to the TcUnit-library in your project, and you can start to write your test code.
-* **MIT-license** - The library and all the source code is licensed according to the [MIT-license](https://opensource.org/licenses/MIT), which is one of the most permissive software license terms. The software is completely free and you can use the software in any way you want, be it private or for commercial use as long as you include the MIT license terms with your software.
-* **Automated test runs** - With the additional [TcUnit-Runner software](https://github.com/tcunit/TcUnit-Runner), it’s possible to do integrate all your TcUnit tests into a CI/CD software toolchain. With the aid of Jenkins (or any other automation software), you can have your tests being run automatically and collect test statistics every time something is changed in your software version control (such as Git or Subversion). If you want to know more, read the [documentation for TcUnit-Runner](https://tcunit.org/tcunit-runner-user-manual/).
+* **Easy to use** - All functionality is provided by one single library. All that is needed is to download & install the library, and provide a reference to the TcUnit-library in your project, and you can start to write your test code
+* **MIT-license** - The library and all the source code is licensed according to the [MIT-license](https://opensource.org/licenses/MIT), which is one of the most permissive software license terms. The software is completely free and you can use the software in any way you want, be it private or for commercial use as long as you include the MIT license terms with your software
+* **Automated test runs** - With the additional [TcUnit-Runner software](https://github.com/tcunit/TcUnit-Runner), it’s possible to integrate all your TcUnit tests into a [CI/CD](https://en.wikipedia.org/wiki/CI/CD) software toolchain. With the aid of Jenkins (or any other automation software), you can have your tests run automatically and collect test statistics every time something is changed in your software version control (such as Git or Subversion). If you want to know more, read the [documentation for TcUnit-Runner](https://tcunit.org/tcunit-runner-user-manual/)
 * **Runs in PLC** - All tests are run in a PLC-environment, so that real-time behaviour can also be tested
 
 ### Disadvantages
 
 * **Requires to learn a new framework** -  If you are already used to standard "IT" frameworks such as JUnit, NUnit or Googletest then TcUnit will feel similar, but it's an additional framework to learn
-* **Runs in PLC** - Can get a little bit time consuming to run the tests if you need to activate configuration, start TwinCAT etc
+* **Runs in PLC** - It can be a little bit time consuming to run the tests if you need to activate configuration, start TwinCAT etc
