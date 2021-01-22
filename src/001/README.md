@@ -66,29 +66,60 @@ We will give a brief description of each unit testing framework, and also provid
 
 #### History
 
-The concept of Tc.Prober was developed and used within [MTS](https://www.mts.sk/en) company as a part of the effort to provide high quality, testable components for industrial applications based on [Beckhoff's TwinCAT 3](https://infosys.beckhoff.com/english.php?content=../content/1033/tcinfosys3/index.html&id=) platform. Tc.Prober is part of a wider initiative that eventually became [Inxton project](https://www.inxton.com).
+The concept of Tc.Prober was first developed and used within a company
+called [MTS](https://www.mts.sk/en),  as part of the effort to provide
+high quality, testable components, for industrial applications based
+on [Beckhoff\'s TwinCAT
+3](https://infosys.beckhoff.com/english.php?content=../content/1033/tcinfosys3/index.html&id=) platform.
+Tc.Prober is part of a wider initiative that eventually became the
+[Inxton project](https://www.inxton.com/).
 
-#### What Tc.Prober is
+#### What is Tc.Prober? 
 
-Tc.Prober is a library that in conjunction with [*Inxton.Vortex.Compiler*](https://github.com/Inxton/documentation/blob/master/apis/Inxton.vortex.compiler.console/README.md) (IVC) allows for running unit tests of the TwiCAT 3 plc code using well-known unit testing frameworks widely used .NET ecosystem.
+Tc.Prober is a library that, in conjunction with
+the *Inxton.Vortex.Compiler* (IVC), allows for the administration of
+unit tests of TwinCAT 3 PLC code *---* using well-known unit testing
+frameworks widely utilised in the .NET ecosystem.
 
-Tc.Prober takes advantage of some features offered by TwinCAT 3 platform that makes it possible to invoke plc methods marked with attribute ```TcRpcEnable``` over ADS from a .NET based code.
+Tc.Prober takes advantage of some features offered by the TwinCAT 3
+platform, which makes it possible to invoke PLC methods marked with the
+attribute TcRpcEnable over ADS from a .NET based code.
 
-To make the process faster to implement, it relays on IVC compiler. IVC trans-piles the plc program declarations and methods into so-called [twin-objects](https://github.com/Inxton/documentation/blob/master/apis/Inxton.vortex.compiler.console/Conceptual/TwinObjects.md), these are C# classes mirroring the structure of the plc program. They provide multiple layered access to the plc's data and remotely invocable methods.
+To make the process faster to implement, it relies on the IVC compiler.
+IVC transpiles the PLC program declarations and methods into
+so-called [twin-objects](https://github.com/Inxton/documentation/blob/master/apis/Inxton.vortex.compiler.console/Conceptual/TwinObjects.md),
+these are actually C\# classes mirroring the structure of the PLC
+program, which provide multiple layered access to the PLC\'s data, and
+allow for remotely invocable methods.
 
-Tc.Prober implements [runners](https://github.com/TcOpenGroup/tc.prober#run-test-in-nunit) that provide control over the execution of the code under test. Runner, in other words, is a mechanism emulate plc task from the .NET environment.
+Tc.Prober
+implements [runners](https://github.com/TcOpenGroup/tc.prober#run-test-in-nunit) that
+provide control over the execution of the code undergoing the test. A
+runner, in other words, is a mechanism that emulates the PLC task from
+the .NET environment.
 
-There is also an implementation of the [runner](https://github.com/TcOpenGroup/tc.prober#test-recording) with test recording capability. This is especially useful when we have the availability of hardware for testing for a limited time. In this way, we can record the behaviour of the hardware when available and re-run the tests with the recorded image later.
+There is also the implementation of
+a [runner](https://github.com/TcOpenGroup/tc.prober#test-recording) with
+test recording capability. This is especially useful when we only have
+the hardware available for testing for a limited time. In this way, we
+can record the behaviour of the hardware when it is available, and
+re-run the tests with the recorded image later.
 
-So to answer a question of what the Tc.Prober is in short: the library that brings your unit testing iterations to .NET testing frameworks of your choice be it xUnit, nUnit, MSUnit.
+So, to answer the question of what the Tc.Prober is in short: the
+library that brings your unit testing iterations to a .NET testing
+framework~~s~~ of your choice *---* be it xUnit, nUnit, or even MSUnit.
 
-<img src="assets/conceptual.png" width="600" height="400" />
+#### How does it work?
 
-#### How does it work
+What follows is merely a conceptual overview, which does not aim to
+provide a fully functional and usable example. In [this
+GitHub](https://github.com/PTKu/Tc.Prober.Examples) repository, you can
+find explanatory and practicable examples. For simplicity, we provide
+the minimalist way of writing test code --- albeit a style that does not
+necessarily represent the best practice.
 
-Following is just a conceptual overview that does not aim to provide a fully working and usable example. In [this GitHub](https://github.com/PTKu/Tc.Prober.Examples) repository, you can find explanatory functional examples. For simplicity, we provide the minimalist way of writing the testing code that does not necessarily represent the best practice.
-
-Let's have a function block with following definition and method implementation:
+Let\'s have a function block with the following definition and method
+implementation:
 
 ~~~ PASCAL
 FUNCTION_BLOCK fbDrive
@@ -117,9 +148,16 @@ MoveAbsolute := _targetPosition = _position;
 //----------------------------------
 ~~~
 
-This would be the production code that we shall unit test. For simplicity we simulate the position of the drive in ```_position``` variable when ```_position``` and ```_targetPosition``` equal the method returns true; that in this case stands for ```operation done```.
+This will be the production code that we shall unit test. For
+simplicity, we simulate the position of the drive in
+the \_position variable, and when \_position and \_targetPosition are
+equal the method returns true; which in this case, stands for operation
+done.
 
-Let's have testing function block that has an instance of ```fbDrive``` block and implements testing method ```MoveAbsoluteTest()``` that invokes fbDrive's MoveAbsolute() method.
+Let\'s have a testing function block that has an instance
+of fbDrive block and implements the testing method MoveAbsoluteTest(),
+which invokes fbDrive\'s MoveAbsolute() method.
+
 
 ~~~ PASCAL
 FUNCTION_BLOCK INTERNAL fbDriveTest
@@ -141,14 +179,30 @@ MoveAbsoluteTest := _drive.MoveAbsolute(Position, Speed, AccDcc);
 //----------------------------------
 ~~~
 
-This would be the part of code that executes the test for our ```fbDrive``` block. The body of the method only calls ```MoveAbsolute``` method.
+This would be the part of the code that executes the test for
+our fbDrive block. The body of the method only calls
+the MoveAbsolute method.
 
 Here are two things to notice:
 
-* method ```MoveAbsoluteTest``` has ```TcRpcEnable``` attribute. This will tell IVC that we want this method to be invocable from a pc application (whatever that application is, in this case, unit testing).
-* the ```fbDriveTest``` and ```MoveAbsoluteTest```  are marked with access modifier ```INTERNAL``` which makes them visible only within the project where it is declared. In this way, we render the testing blocks invisible to any external consumer of our library. If you are trying to make a project from scratch and need to access internals in testing a project you'll need to add [InternalsVisibleTo](https://docs.microsoft.com/en-us/dotnet/api/system.runtime.compilerservices.internalsvisibletoattribute?view=netframework-4.8) assembly attribute, [see also here](https://github.com/PTKu/Tc.Prober.Examples/blob/main/src/001/PlcConnector/Properties/AssemblyInfo.cs).
+-   Method MoveAbsoluteTest has a TcRpcEnable attribute. This will tell
+    IVC that we want this method to be invocable from a PC application
+    (whatever that application is, in this case, unit testing).
 
-Now. In order to instantiate our testing block let's have a ```MAIN_TESTS``` program that will hold the instance of the testing function block. The program ```MAIN_TESTS``` must be assigned to a ```Plc Task``` for ```ADS``` symbols are created.
+-   the fbDriveTest and MoveAbsoluteTest are marked with the access
+    modifier INTERNAL which makes them visible only within the project
+    where they are declared. In this way, we render the testing blocks
+    invisible to any external consumer of our library. If you are trying
+    to make a project from scratch, and need to access internals in
+    testing a project; you\'ll need to add InternalsVisibleTo the
+    assembly attribute, [see also
+    here](https://github.com/PTKu/Tc.Prober.Examples/blob/main/src/001/PlcConnector/Properties/AssemblyInfo.cs).
+
+Now. In order to instantiate our testing block, let\'s have
+a MAIN_TESTS program that will hold the instance of the testing function
+block. The program MAIN_TESTS must be assigned to a PLC
+Task for ADS symbols to be created.
+
 
 ~~~ PASCAL
 PROGRAM INTERNAL MAIN_TESTS
@@ -158,25 +212,59 @@ END_VAR
 //----------------------------------
 ~~~
 
-At this point, we have our plc code ready. We will need now to run IVC to make the plc program available to our unit testing project. There are two ways we can run the IVC running [IVC CLI](https://github.com/Inxton/documentation/blob/master/apis/Inxton.vortex.compiler.console/README.md#command-line-interface-cli) or install [VS extension](https://marketplace.visualstudio.com/items?itemName=Inxton.InxtonVortexBuilderExtensionPre).
+At this point, we have our PLC code ready. We will now need to run IVC
+to make the PLC program available to our unit testing project. There are
+two ways we can run the IVC; running [IVC
+CLI](https://github.com/Inxton/documentation/blob/master/apis/Inxton.vortex.compiler.console/README.md#command-line-interface-cli) or
+we can install [VS
+extension](https://marketplace.visualstudio.com/items?itemName=Inxton.InxtonVortexBuilderExtensionPre).
 
-If you are trying to make the project from scratch, then you should go [here](https://github.com/Inxton/documentation) to understand the basics of Inxton.Vortex.Framework (IVF).
+If you are trying to make the project from scratch, then you should
+go [here](https://github.com/Inxton/documentation) to understand the
+basics of the Inxton.Vortex.Framework (IVF).
 
-Once we have successfully run the IVC, we will get .NET twin (PlcConnector project), that is the mirror of the plc program that will allow us to access the it from .NET environment.
+Once we have successfully run the IVC, we will get the .NET twin
+(PlcConnector project), which is the mirror of the PLC program that will
+allow us to access it from the .NET environment.
 
 <img src="assets/se_plc_twin.png" width="200" height="300" />
 
-Now we are ready to perform the test using testing framework. In this instance we use ```nUnit```, however any other framework can be used. In the following example we have testing method ```MoveAbsoluteTest_dotnet_method```. 
+Now we are ready to perform the test using a testing framework. In this
+instance, we will use nUnit --- however, any other framework can be
+used. In the following example, we have the testing
+method MoveAbsoluteTest_dotnet_method.
 
-The method has a series of attributes. ```Test``` attributes indicates to nUnit that this method should be explored and able to execute by testing runner. ```TestCase``` attributes are running this method with different set of parameters ```position``` ```speed``` and ```accdcc```. ```Timeout``` attribute indicates that the test should run within 5 second before it fails with time out.
+This method has a series of attributes.  The Test attribute indicates to
+nUnit that this method should be explored, and able to be executed by
+the testing runner. TestCase attributes run this method with a different
+set of parameters position speed and accdcc.  The Timeout attribute
+indicates that the test should run within five seconds before it fails
+with a time out.
 
-Let's dive into the body of the method. First thing to observe is the variable ```subjectUnderTest``` that is the representation of our testing function block ```fbDriveTest```. ```Entry.Plc.MAIN_TEST._driveTest``` is the .NET replica ```twin``` of given function block and ```subjectUnderTest``` is just shortened access variable for convenience.
+Let\'s dive into the body of the method. The first thing to observe is
+the variable subjectUnderTest that is the representation of our testing
+function block fbDriveTest.  Entry.Plc.MAIN_TEST.\_driveTest is the .NET
+replica twin of the given function block and subjectUnderTest is just a
+shortened access variable for the sake of convenience.
 
-Next we set a series of variables that hold the expected values for the assertion later in the test.
+Next, we set a series of variables that will hold the expected values
+for the assertion later in the test.
 
-At this point we are ready to execute the actual plc method ```MoveAbsoluteTest```. In this case we use Tc.Prober's runner that is an extension method of any object that is produced by ```IVC``` aka ```IVortexObject```. If you are unfamiliar with lambda expressions you just read ```subjectUnderTest.Run``` ```a```(which is subject under test) goes to ```=>``` the right side of the lambda expression. Even in more simple terms you can, in this instance, just consider ```a``` to be our ```subjectUnderTest``` so we can invoke the call ```a.MoveAbsoluteTest(position, speed, accdcc)```. This call actually executes the method inside the plc any number of times until the method return ```true```.
+At this point, we are ready to execute the actual PLC
+method MoveAbsoluteTest. In this case we use Tc.Prober\'s runner, which
+is an extension method of any object that is produced
+by IVC AKA IVortexObject. If you are unfamiliar with Lambda expressions
+you just read subjectUnderTest.Run a(which is the subject under test)
+go~~es~~? to =\> the right side of the Lambda expression. Even in more
+simplistic terms you can, in this instance, just consider a to be
+our subjectUnderTest so that we can invoke the
+call a.MoveAbsoluteTest(position, speed, accdcc). This call actually
+executes the method inside the PLC any number of times until the method
+return is true.
 
-Now we will make assertions to check that the run of the method produced expected results. In this case we just check that the variables inside the plc hold expected values.
+Now we will make assertions to check that the run of the method produced
+the expected results. In this case, we just check that the variables
+inside the PLC hold the expected values.
 
 ~~~ CSharp
 using Tc.Prober.Runners;
@@ -234,16 +322,34 @@ Now we are ready to execute the tests from ```Test explorer```!
 
 #### Advantages
 
-* Direct use of well-evolved unit testing frameworks in plc code testing.
-* Runners can be in control of the cycle execution. It allows creating complex assertions in single cycles.
-* Ability to record the state of the plc structure for later reconstruction of hardware behavior.
+-   Direct use of well-evolved unit testing frameworks in PLC code
+    testing.
+
+-   Runners can be in control of the cycle execution. This allows for
+    the creation of complex assertions in single cycles.
+
+-   Ability to record the state of the PLC structure for a post
+    reconstruction of hardware behaviour.
 
 #### Disadvantages
 
-* In scenarios when method is executed by runner and not plc task it must be taken into consideration the interaction between hard-real-time and non-real-time environment, in particular when interacting with I/O systems. This may lead to convoluted test design, nasty concurrency and race conditions.
-* Whenever the fast execution or low jitter is required, this approach might is not suitable when execution is run exclusively by runners.
-* When the execution of test is provided solely by test runner the breakpoints in PLC program are not hit. Alternatively an asynchronous pattern can be used for testing when the runners only fire execution of the code within a PLC task and checks for completion, after which the assertion can be made.
+-   In scenarios where a method is executed by a runner, and not a PLC
+    task, the interaction between hard real-time and non-real-time
+    environments must be taken into consideration --- particularly when
+    interacting with I/O systems --- as this may lead to a convoluted
+    test design, nasty concurrency, and race conditions!
 
+-   Whenever fast execution or low jitter is required: this approach
+    might not be suitable when the execution is run exclusively by the
+    runners.
+
+-   When the execution of a test is provided solely by a test runner;
+    the breakpoints in a PLC program are not hit. Alternatively, an
+    asynchronous pattern can be used for testing, when the runners only
+    fire the execution of the code within a PLC task and check for
+    completion, after which the assertion can be made.
+
+    
 ## TcUnit
 
 ### Brief description
