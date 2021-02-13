@@ -359,7 +359,7 @@ _Vortex/*.exe
 _Vortex/*.txt
 _Vortex/*.md
 _meta/
-_generated/
+#_generated/
 
 # TwinCAT3 
 
